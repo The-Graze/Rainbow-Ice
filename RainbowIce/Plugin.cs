@@ -7,33 +7,44 @@ using Utilla;
 
 namespace RainbowIce
 {
-    /// <summary>
-    /// This is your mod's main class.
-    /// </summary>
-
-    /* This attribute tells Utilla to look for [ModdedGameJoin] and [ModdedGameLeave] */
-    [ModdedGamemode]
     [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
     {
         bool inRoom;
         public GameObject loader;
-
+        Stream str;
+        AssetBundle rainbow;
+        public static Material mat;
         void Start()
         {
-            Utilla.Events.GameInitialized += OnGameInitialized;
+            Events.GameInitialized += OnGameInitialized;
         }
         void OnGameInitialized(object sender, EventArgs e)
         {
-            Stream str = Assembly.GetExecutingAssembly().GetManifestResourceStream("RainbowIce.Assets.loader");
-            AssetBundle rainbow = AssetBundle.LoadFromStream(str);
+            str = Assembly.GetExecutingAssembly().GetManifestResourceStream("RainbowIce.Assets.loader");
+            rainbow = AssetBundle.LoadFromStream(str);
             GameObject road = rainbow.LoadAsset<GameObject>("loader");
-            
-
-
-            GameObject.Find("Level/mountain/Geometry/mountainsideice").GetComponent<Renderer>().material = road.GetComponent<Renderer>().material;
-
+            str.Close();
+            mat = road.GetComponent<Renderer>().material;
+            GameObject.Find("LocalObjects_Prefab").AddComponent<MountainLooker>();
+            rainbow.Unload(false);
+        }
+    }
+    class MountainLooker : MonoBehaviour 
+    {
+        void Update()
+        {
+            if (transform.GetChild(9).gameObject.activeSelf)
+            {
+                transform.FindChildRecursive("iceground (combined mesh created by EdMeshCombinerSceneProcessor)").GetComponent<Renderer>().material = Plugin.mat;
+                Destroy(this);
+                return;
+            }
+            else
+            {
+                return;
+            }
         }
     }
 }
