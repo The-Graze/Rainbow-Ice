@@ -7,6 +7,6 @@
     {
         public const string GUID = "com.graze.gorillatag.rainbowice";
         public const string Name = "RainbowIce";
-        public const string Version = "2.0.0";
+        public const string Version = "4.0.0";
     }
 }
